@@ -36,7 +36,23 @@ export function registerTool(
   }
 
   const parameters = tool.parameters as z.ZodObject<z.ZodRawShape>;
-  server.tool(tool.name, tool.description, parameters.shape, handler);
+  // The SDK's tool() overloads use ZodRawShapeCompat (from its internal zod-compat
+  // layer) which TypeScript cannot resolve without hitting the TS2589 "excessively
+  // deep type instantiation" limit when inferring against z.ZodRawShape's index
+  // signature. The cast via unknown is safe: at runtime the SDK accepts a plain
+  // ZodRawShape (Record<string, ZodTypeAny>) exactly as before.
+  type ToolFn = (
+    name: string,
+    description: string,
+    shape: z.ZodRawShape,
+    handler: (args: Record<string, unknown>) => Promise<CallToolResult>,
+  ) => void;
+  (server.tool as unknown as ToolFn)(
+    tool.name,
+    tool.description,
+    parameters.shape,
+    handler,
+  );
   return true;
 }
 
