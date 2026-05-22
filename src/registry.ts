@@ -36,7 +36,18 @@ export function registerTool(
   }
 
   const parameters = tool.parameters as z.ZodObject<z.ZodRawShape>;
-  server.tool(tool.name, tool.description, parameters.shape, handler);
+  type ToolFn = (
+    name: string,
+    description: string,
+    shape: z.ZodRawShape,
+    handler: (args: Record<string, unknown>) => Promise<CallToolResult>,
+  ) => void;
+  (server.tool as unknown as ToolFn)(
+    tool.name,
+    tool.description,
+    parameters.shape,
+    handler,
+  );
   return true;
 }
 
