@@ -1,5 +1,5 @@
 import { getValidToken, refreshToken } from "../../auth.js";
-import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { BASE_API_URL } from "../../api.js";
 import {

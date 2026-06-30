@@ -3,8 +3,8 @@
 // reducing import clutter and ensuring consistency across the codebase.
 
 // Core MCP and type imports
-export { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-export { Tool } from "../../types.js";
+export type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+export type { Tool } from "../../types.js";
 export { z } from "zod";
 
 // Re-export all utilities
