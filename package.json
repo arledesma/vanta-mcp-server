@@ -12,13 +12,13 @@
   ],
   "scripts": {
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
-    "start": "yarn build && node build/index.js",
+    "start": "bun run build && node build/index.js",
     "eval": "tsc && node build/eval/eval.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"**/*.{ts,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,json,md}\"",
-    "fix": "npm run format && npm run lint:fix"
+    "fix": "bun run format && bun run lint:fix"
   },
   "keywords": [
     "mcp",
@@ -50,12 +50,10 @@
     "eslint-config-prettier": "^9.1.0",
     "openai": "^4.29.1",
     "prettier": "^3.2.5",
-    "typescript": "^5.8.2",
-    "zod-to-json-schema": "^3.24.6"
+    "typescript": "^5.8.2"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.6.0",
-    "zod": ">= 3"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "zod": "^3.25 || ^4.0"
+  }
 }

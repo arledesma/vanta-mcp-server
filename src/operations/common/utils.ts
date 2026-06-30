@@ -296,18 +296,19 @@ export function createTrustCenterConsolidatedSchema(
  */
 export function buildUrl(
   basePath: string,
-  params: Record<string, string | number | boolean | string[] | undefined> = {},
+  params: Record<string, unknown> = {},
 ): string {
   const url = new URL(basePath, BASE_API_URL);
 
   for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined) {
-      if (Array.isArray(value)) {
-        // Handle arrays by joining with commas
-        url.searchParams.set(key, value.join(","));
-      } else {
-        url.searchParams.set(key, String(value));
-      }
+    if (value === undefined || value === null) {
+      continue;
+    }
+    if (Array.isArray(value)) {
+      // Handle arrays by joining with commas
+      url.searchParams.set(key, value.map(item => String(item)).join(","));
+    } else {
+      url.searchParams.set(key, String(value));
     }
   }
 
@@ -334,7 +335,7 @@ export async function makeSimpleGetRequest(
  */
 export async function makePaginatedGetRequest(
   endpoint: string,
-  params: Record<string, string | number | boolean | string[] | undefined> = {},
+  params: Record<string, unknown> = {},
 ): Promise<CallToolResult> {
   const url = buildUrl(endpoint, params);
   const response = await makeAuthenticatedRequest(url);
@@ -358,7 +359,7 @@ export async function makeGetByIdRequest(
  */
 export async function makeConsolidatedRequest(
   endpoint: string,
-  params: Record<string, string | number | boolean | string[] | undefined>,
+  params: Record<string, unknown>,
   idParamName: string,
 ): Promise<CallToolResult> {
   const id = params[idParamName];
@@ -379,7 +380,7 @@ export async function makeConsolidatedRequest(
  */
 export async function makeTrustCenterConsolidatedRequest(
   baseEndpoint: string,
-  params: Record<string, string | number | boolean | string[] | undefined>,
+  params: Record<string, unknown>,
   idParamName: string,
   resourcePath: string,
 ): Promise<CallToolResult> {

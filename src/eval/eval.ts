@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { zodToJsonSchema } from "zod-to-json-schema";
+import { z } from "zod";
 import {
   // Tests
   TestsTool,
@@ -64,6 +64,11 @@ import {
   ListTrustCenterHistoricalAccessRequestsTool,
   ListTrustCenterSubscribersTool,
 } from "../operations/index.js";
+
+// zod 4 provides native JSON Schema conversion. This replaces the external
+// zod-to-json-schema package, which only understands zod 3 schema internals.
+const zodToJsonSchema = (schema: z.ZodType): Record<string, unknown> =>
+  z.toJSONSchema(schema) as Record<string, unknown>;
 
 // Format all tools for OpenAI
 const tools = [

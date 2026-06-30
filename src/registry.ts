@@ -18,7 +18,13 @@ export interface ToolDefinition {
 // Tool registry interface for operations modules
 export interface ToolEntry {
   tool: ToolDefinition;
-  handler: (args: z.infer<z.ZodTypeAny>) => Promise<CallToolResult>;
+  // Each operation's handler is typed against its own concrete schema
+  // (args: z.infer<typeof SomeInput>). Collapsing those heterogeneous handler
+  // signatures into one array requires a bivariant arg type; `any` is the only
+  // type that accepts them all. (Under zod 3 this was z.infer<z.ZodTypeAny>,
+  // which resolved to `any`; zod 4 resolves it to `unknown`, which is too strict.)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: (args: any) => Promise<CallToolResult>;
   // When true, the tool is only registered if writes are enabled
   // (--dangerously-allow-writes). Used to gate mutating tools.
   requiresWrites?: boolean;
@@ -32,7 +38,9 @@ export interface OperationModule {
 export function registerTool(
   server: McpServer,
   tool: ToolDefinition,
-  handler: (args: z.infer<z.ZodTypeAny>) => Promise<CallToolResult>,
+  // See ToolEntry.handler: heterogeneous per-schema handlers require a bivariant arg type.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler: (args: any) => Promise<CallToolResult>,
   entry: Pick<ToolEntry, "requiresWrites"> = {},
 ): boolean {
   if (entry.requiresWrites && !isWritesEnabled()) {
