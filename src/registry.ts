@@ -5,6 +5,7 @@ import {
   getEnabledToolNames,
   hasEnabledToolFilter,
   isToolEnabled,
+  isWritesEnabled,
 } from "./config.js";
 
 // Tool definition interface (matches our Tool pattern)
@@ -18,6 +19,9 @@ export interface ToolDefinition {
 export interface ToolEntry {
   tool: ToolDefinition;
   handler: (args: z.infer<z.ZodTypeAny>) => Promise<CallToolResult>;
+  // When true, the tool is only registered if writes are enabled
+  // (--dangerously-allow-writes). Used to gate mutating tools.
+  requiresWrites?: boolean;
 }
 
 export interface OperationModule {
@@ -29,7 +33,15 @@ export function registerTool(
   server: McpServer,
   tool: ToolDefinition,
   handler: (args: z.infer<z.ZodTypeAny>) => Promise<CallToolResult>,
+  entry: Pick<ToolEntry, "requiresWrites"> = {},
 ): boolean {
+  if (entry.requiresWrites && !isWritesEnabled()) {
+    console.error(
+      `🔒 Skipping write tool (--dangerously-allow-writes not set): ${tool.name}`,
+    );
+    return false;
+  }
+
   if (!isToolEnabled(tool.name)) {
     console.error(`⚪️ Skipping tool not in enabled list: ${tool.name}`);
     return false;
@@ -64,8 +76,10 @@ export function registerOperationModule(
   let registered = 0;
   let skipped = 0;
 
-  operationModule.tools.forEach(({ tool, handler }) => {
-    const wasRegistered = registerTool(server, tool, handler);
+  operationModule.tools.forEach(({ tool, handler, requiresWrites }) => {
+    const wasRegistered = registerTool(server, tool, handler, {
+      requiresWrites,
+    });
     if (wasRegistered) {
       registered += 1;
     } else {
@@ -97,6 +111,13 @@ export async function registerAllOperations(server: McpServer): Promise<void> {
     import("./operations/monitored-computers.js"),
     import("./operations/vendor-risk-attributes.js"),
     import("./operations/trust-centers.js"),
+    // Write operation modules (tools gated behind --dangerously-allow-writes)
+    import("./operations/write-vulnerabilities.js"),
+    import("./operations/write-tests.js"),
+    import("./operations/write-people.js"),
+    import("./operations/write-controls.js"),
+    import("./operations/write-documents.js"),
+    import("./operations/write-risks.js"),
   ];
 
   // Load all modules and register their tools

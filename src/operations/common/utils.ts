@@ -58,6 +58,37 @@ export async function makeAuthenticatedRequest(
   return response;
 }
 
+/**
+ * Makes an authenticated HTTP write request (POST, PATCH, or DELETE) with an
+ * optional JSON body. Reuses makeAuthenticatedRequest, so it inherits the
+ * 401-refresh-and-retry behavior.
+ */
+export async function makeAuthenticatedWriteRequest(
+  url: string,
+  method: "POST" | "PATCH" | "DELETE",
+  body?: unknown,
+): Promise<Response> {
+  return makeAuthenticatedRequest(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+  });
+}
+
+/**
+ * Makes an authenticated multipart/form-data write request (POST). Unlike
+ * makeAuthenticatedWriteRequest, this does NOT set Content-Type: fetch derives
+ * the correct `multipart/form-data; boundary=...` header from the FormData body.
+ * The auth headers from makeAuthenticatedRequest are preserved.
+ */
+export async function makeAuthenticatedMultipartRequest(
+  url: string,
+  form: FormData,
+  method: "POST" | "PATCH" = "POST",
+): Promise<Response> {
+  return makeAuthenticatedRequest(url, { method, body: form });
+}
+
 // ==========================================
 // RESPONSE PROCESSING UTILITIES
 // ==========================================
@@ -100,6 +131,44 @@ export async function handleApiResponse(
     return createErrorResponse(response.statusText);
   }
   return createSuccessResponse(response);
+}
+
+/**
+ * Handles a write (POST/PATCH/DELETE) API response. Unlike handleApiResponse,
+ * this tolerates empty bodies: many write endpoints return 204 No Content or an
+ * empty payload on success, which would make response.json() throw. Returns the
+ * parsed JSON when a body is present, otherwise a plain success message.
+ */
+export async function handleWriteApiResponse(
+  response: Response,
+): Promise<CallToolResult> {
+  if (!response.ok) {
+    return createErrorResponse(response.statusText);
+  }
+
+  const text = await response.text();
+  if (text.trim() === "") {
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Success (HTTP ${String(response.status)})`,
+        },
+      ],
+    };
+  }
+
+  try {
+    const jsonData: unknown = JSON.parse(text);
+    return {
+      content: [{ type: "text", text: JSON.stringify(jsonData, null, 2) }],
+    };
+  } catch {
+    // Body was non-JSON but the request succeeded; surface it as-is.
+    return {
+      content: [{ type: "text", text }],
+    };
+  }
 }
 
 // ==========================================

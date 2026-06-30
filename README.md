@@ -11,22 +11,41 @@ A [Model Context Protocol](https://modelcontextprotocol.com/) server that provid
 - List security controls or fetch a specific control by ID
 - Discover which automated tests validate each control
 - Review evidence documents mapped to controls
+- Create, update, delete, and re-map controls _(write tools — require `--dangerously-allow-writes`)_
 
-| Tool Name                                                                              | Description                                                                                                                                                  |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [`controls`](https://developer.vanta.com/reference/listcontrols)                       | Access security controls in your Vanta account. Provide controlId to get a specific control, or omit to list all controls with optional framework filtering. |
-| [`list_control_tests`](https://developer.vanta.com/reference/listtestsforcontrol)      | Enumerate automated tests that validate a specific security control, including status and failing entity details.                                            |
-| [`list_control_documents`](https://developer.vanta.com/reference/listcontroldocuments) | List documents that provide evidence for a specific security control so you can quickly locate supporting artifacts.                                         |
+| Tool Name                                                                                           | Description                                                                                                                                                  |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`controls`](https://developer.vanta.com/reference/listcontrols)                                    | Access security controls in your Vanta account. Provide controlId to get a specific control, or omit to list all controls with optional framework filtering. |
+| [`list_control_tests`](https://developer.vanta.com/reference/listtestsforcontrol)                   | Enumerate automated tests that validate a specific security control, including status and failing entity details.                                            |
+| [`list_control_documents`](https://developer.vanta.com/reference/listcontroldocuments)              | List documents that provide evidence for a specific security control so you can quickly locate supporting artifacts.                                         |
+| [`create_custom_control`](https://developer.vanta.com/reference/createcustomcontrol) ⚠️             | Create a custom control. **Requires `--dangerously-allow-writes`.**                                                                                          |
+| [`add_control_from_library`](https://developer.vanta.com/reference/addcontrolfromlibrary) ⚠️        | Add a control from the Vanta control library. **Requires `--dangerously-allow-writes`.**                                                                     |
+| [`update_control`](https://developer.vanta.com/reference/updatecontrolmetadata) ⚠️                  | Update a control's metadata. **Requires `--dangerously-allow-writes`.**                                                                                      |
+| [`delete_control`](https://developer.vanta.com/reference/deletecontrol) ⚠️                          | Deactivate (delete) a control. **Requires `--dangerously-allow-writes`.**                                                                                    |
+| [`set_control_owner`](https://developer.vanta.com/reference/setownerforcontrol) ⚠️                  | Set a control's owner. **Requires `--dangerously-allow-writes`.**                                                                                            |
+| [`add_document_to_control`](https://developer.vanta.com/reference/adddocumenttocontrol) ⚠️          | Map a document to a control. **Requires `--dangerously-allow-writes`.**                                                                                      |
+| [`remove_document_from_control`](https://developer.vanta.com/reference/deletedocumentforcontrol) ⚠️ | Remove a document mapping from a control. **Requires `--dangerously-allow-writes`.**                                                                         |
+| [`add_test_to_control`](https://developer.vanta.com/reference/addtesttocontrol) ⚠️                  | Map a test to a control. **Requires `--dangerously-allow-writes`.**                                                                                          |
+| [`remove_test_from_control`](https://developer.vanta.com/reference/deletetestforcontrol) ⚠️         | Remove a test mapping from a control. **Requires `--dangerously-allow-writes`.**                                                                             |
 
 ### Documents
 
 - Enumerate compliance documents across your organization
 - Inspect the controls, links, or uploads associated with a document
+- Create and delete documents, manage links and owners, upload evidence files, and submit collections _(write tools — require `--dangerously-allow-writes`)_
 
-| Tool Name                                                                          | Description                                                                                                                      |
-| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| [`documents`](https://developer.vanta.com/reference/listdocuments)                 | List documents in your Vanta account or retrieve a specific document by ID with metadata for compliance and evidence management. |
-| [`document_resources`](https://developer.vanta.com/reference/listdocumentcontrols) | Retrieve resources linked to a document (controls, links, uploads) by specifying the desired resource type.                      |
+| Tool Name                                                                                         | Description                                                                                                                      |
+| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| [`documents`](https://developer.vanta.com/reference/listdocuments)                                | List documents in your Vanta account or retrieve a specific document by ID with metadata for compliance and evidence management. |
+| [`document_resources`](https://developer.vanta.com/reference/listdocumentcontrols)                | Retrieve resources linked to a document (controls, links, uploads) by specifying the desired resource type.                      |
+| [`create_document`](https://developer.vanta.com/reference/createdocument) ⚠️                      | Create a custom document (evidence request). **Requires `--dangerously-allow-writes`.**                                          |
+| [`delete_document`](https://developer.vanta.com/reference/deletedocument) ⚠️                      | Delete a document by ID. **Requires `--dangerously-allow-writes`.**                                                              |
+| [`create_document_link`](https://developer.vanta.com/reference/createlinkfordocument) ⚠️          | Add an external link as document evidence. **Requires `--dangerously-allow-writes`.**                                            |
+| [`delete_document_link`](https://developer.vanta.com/reference/deletelinkfordocument) ⚠️          | Remove an external link from a document. **Requires `--dangerously-allow-writes`.**                                              |
+| [`set_document_owner`](https://developer.vanta.com/reference/setownerfordocument) ⚠️              | Set a document's owner. **Requires `--dangerously-allow-writes`.**                                                               |
+| [`submit_document_collection`](https://developer.vanta.com/reference/submitdocumentcollection) ⚠️ | Submit a document's collected evidence. **Requires `--dangerously-allow-writes`.**                                               |
+| [`delete_document_upload`](https://developer.vanta.com/reference/deletefilefordocument) ⚠️        | Delete an uploaded file from a document. **Requires `--dangerously-allow-writes`.**                                              |
+| [`upload_file_for_document`](https://developer.vanta.com/reference/uploadfilefordocument) ⚠️      | Upload document evidence from base64 `content` (+ `fileName`) or a local `filePath`. **Requires `--dangerously-allow-writes`.**  |
 
 ### Frameworks
 
@@ -51,36 +70,57 @@ A [Model Context Protocol](https://modelcontextprotocol.com/) server that provid
 ### People
 
 - List or retrieve people for compliance and access reviews
+- Update people, manage leave, classify accounts, and offboard _(write tools — require `--dangerously-allow-writes`)_
 
-| Tool Name                                                    | Description                                                                                                                  |
-| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| [`people`](https://developer.vanta.com/reference/listpeople) | List people in your Vanta account or retrieve a specific person by ID, including role, email, and group membership metadata. |
+| Tool Name                                                                            | Description                                                                                                                  |
+| ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| [`people`](https://developer.vanta.com/reference/listpeople)                         | List people in your Vanta account or retrieve a specific person by ID, including role, email, and group membership metadata. |
+| [`update_person`](https://developer.vanta.com/reference/updateperson) ⚠️             | Update a person's name and/or employment metadata. **Requires `--dangerously-allow-writes`.**                                |
+| [`set_person_leave`](https://developer.vanta.com/reference/setleaveforperson) ⚠️     | Mark a person as on leave between two dates. **Requires `--dangerously-allow-writes`.**                                      |
+| [`clear_person_leave`](https://developer.vanta.com/reference/clearleaveforperson) ⚠️ | Remove a person's leave information. **Requires `--dangerously-allow-writes`.**                                              |
+| [`mark_as_people`](https://developer.vanta.com/reference/markaspeople) ⚠️            | Mark accounts as people (in-scope humans). **Requires `--dangerously-allow-writes`.**                                        |
+| [`mark_as_not_people`](https://developer.vanta.com/reference/markasnotpeople) ⚠️     | Mark accounts as not people (e.g. service accounts). **Requires `--dangerously-allow-writes`.**                              |
+| [`offboard_people`](https://developer.vanta.com/reference/offboardpeople) ⚠️         | Offboard one or more people. **Requires `--dangerously-allow-writes`.**                                                      |
 
 ### Risks
 
 - Track risk scenarios, their status, scoring, and treatment plans
+- Create and update risk scenarios, manage controls, and drive approvals _(write tools — require `--dangerously-allow-writes`)_
 
-| Tool Name                                                          | Description                                                                                                                                |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| [`risks`](https://developer.vanta.com/reference/listriskscenarios) | List risk scenarios managed in your risk register or fetch a specific scenario by ID to review status, scoring, and treatment information. |
+| Tool Name                                                                                                    | Description                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`risks`](https://developer.vanta.com/reference/listriskscenarios)                                           | List risk scenarios managed in your risk register or fetch a specific scenario by ID to review status, scoring, and treatment information. |
+| [`create_risk_scenario`](https://developer.vanta.com/reference/createriskscenario) ⚠️                        | Create a risk scenario. **Requires `--dangerously-allow-writes`.**                                                                         |
+| [`update_risk_scenario`](https://developer.vanta.com/reference/updateriskscenario) ⚠️                        | Update a risk scenario's fields. **Requires `--dangerously-allow-writes`.**                                                                |
+| [`submit_risk_for_approval`](https://developer.vanta.com/reference/submitriskforapproval) ⚠️                 | Submit a risk scenario for approval. **Requires `--dangerously-allow-writes`.**                                                            |
+| [`cancel_risk_approval_request`](https://developer.vanta.com/reference/cancelriskscenarioapprovalrequest) ⚠️ | Cancel a pending approval request. **Requires `--dangerously-allow-writes`.**                                                              |
+| [`add_risk_scenario_control`](https://developer.vanta.com/reference/createriskscenariocontrol) ⚠️            | Add a control to a risk scenario. **Requires `--dangerously-allow-writes`.**                                                               |
+| [`update_risk_scenario_control`](https://developer.vanta.com/reference/updateriskscenariocontrol) ⚠️         | Change a risk scenario control's type. **Requires `--dangerously-allow-writes`.**                                                          |
+| [`remove_risk_scenario_control`](https://developer.vanta.com/reference/deleteriskscenariocontrol) ⚠️         | Remove a control from a risk scenario. **Requires `--dangerously-allow-writes`.**                                                          |
 
 ### Tests
 
 - Monitor automated security tests running in your environment
 - Investigate the entities associated with a specific test
+- Deactivate or reactivate monitoring for individual test entities _(write tools — require `--dangerously-allow-writes`)_
 
-| Tool Name                                                                     | Description                                                                                                                                                |
-| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`tests`](https://developer.vanta.com/reference/listtests)                    | Retrieve Vanta's automated security and compliance tests. Filter by status, integration, or framework to understand which controls are passing or failing. |
-| [`list_test_entities`](https://developer.vanta.com/reference/gettestentities) | Get the resources monitored by a specific security test, including failing entities that require remediation.                                              |
+| Tool Name                                                                                 | Description                                                                                                                                                |
+| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`tests`](https://developer.vanta.com/reference/listtests)                                | Retrieve Vanta's automated security and compliance tests. Filter by status, integration, or framework to understand which controls are passing or failing. |
+| [`list_test_entities`](https://developer.vanta.com/reference/gettestentities)             | Get the resources monitored by a specific security test, including failing entities that require remediation.                                              |
+| [`deactivate_test_entity`](https://developer.vanta.com/reference/deactivatetestentity) ⚠️ | Deactivate monitoring for a specific entity within a test. **Requires `--dangerously-allow-writes`.**                                                      |
+| [`reactivate_test_entity`](https://developer.vanta.com/reference/reactivatetestentity) ⚠️ | Reactivate monitoring for a test entity. **Requires `--dangerously-allow-writes`.**                                                                        |
 
 ### Vulnerabilities
 
 - Review vulnerabilities surfaced by Vanta, including CVE metadata and affected assets
+- Deactivate or reactivate vulnerability monitoring in bulk _(write tools — require `--dangerously-allow-writes`)_
 
-| Tool Name                                                                      | Description                                                                                                                                                     |
-| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`vulnerabilities`](https://developer.vanta.com/reference/listvulnerabilities) | List vulnerabilities detected across your infrastructure or retrieve a specific vulnerability by ID with CVE details, severity, and impacted asset information. |
+| Tool Name                                                                                          | Description                                                                                                                                                     |
+| -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`vulnerabilities`](https://developer.vanta.com/reference/listvulnerabilities)                     | List vulnerabilities detected across your infrastructure or retrieve a specific vulnerability by ID with CVE details, severity, and impacted asset information. |
+| [`deactivate_vulnerabilities`](https://developer.vanta.com/reference/deactivatevulnerabilities) ⚠️ | Deactivate monitoring for 1–50 vulnerabilities, each with a reason and auto-reactivation flag. **Requires `--dangerously-allow-writes`.**                       |
+| [`reactivate_vulnerabilities`](https://developer.vanta.com/reference/reactivatevulnerabilities) ⚠️ | Reactivate monitoring for 1–50 vulnerabilities. **Requires `--dangerously-allow-writes`.**                                                                      |
 
 ## Tools
 
@@ -100,6 +140,47 @@ A [Model Context Protocol](https://modelcontextprotocol.com/) server that provid
 | [`people`](https://developer.vanta.com/reference/listpeople)                               | List people across your organization or look up a specific person by ID with role, email, and group membership metadata.                        |
 | [`risks`](https://developer.vanta.com/reference/listriskscenarios)                         | List risk scenarios under management or fetch a specific scenario to review status, scoring, and treatment plans.                               |
 | [`vulnerabilities`](https://developer.vanta.com/reference/listvulnerabilities)             | List detected vulnerabilities or retrieve a specific item with CVE metadata, severity, and impacted assets.                                     |
+
+### Write Tools
+
+The following tools **mutate data** in your Vanta account and are only registered when the server is started with [`--dangerously-allow-writes`](#write-operations). See [Write Operations](#write-operations) for setup.
+
+| Tool Name                                                                                                 | Description                                                |
+| --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [`deactivate_vulnerabilities`](https://developer.vanta.com/reference/deactivatevulnerabilities)           | Deactivate monitoring for 1–50 vulnerabilities.            |
+| [`reactivate_vulnerabilities`](https://developer.vanta.com/reference/reactivatevulnerabilities)           | Reactivate monitoring for 1–50 vulnerabilities.            |
+| [`deactivate_test_entity`](https://developer.vanta.com/reference/deactivatetestentity)                    | Deactivate monitoring for a specific entity within a test. |
+| [`reactivate_test_entity`](https://developer.vanta.com/reference/reactivatetestentity)                    | Reactivate monitoring for a test entity.                   |
+| [`update_person`](https://developer.vanta.com/reference/updateperson)                                     | Update a person's name and/or employment metadata.         |
+| [`set_person_leave`](https://developer.vanta.com/reference/setleaveforperson)                             | Mark a person as on leave between two dates.               |
+| [`clear_person_leave`](https://developer.vanta.com/reference/clearleaveforperson)                         | Remove a person's leave information.                       |
+| [`mark_as_people`](https://developer.vanta.com/reference/markaspeople)                                    | Mark accounts as people (in-scope humans).                 |
+| [`mark_as_not_people`](https://developer.vanta.com/reference/markasnotpeople)                             | Mark accounts as not people (e.g. service accounts).       |
+| [`offboard_people`](https://developer.vanta.com/reference/offboardpeople)                                 | Offboard one or more people.                               |
+| [`create_custom_control`](https://developer.vanta.com/reference/createcustomcontrol)                      | Create a custom control.                                   |
+| [`add_control_from_library`](https://developer.vanta.com/reference/addcontrolfromlibrary)                 | Add a control from the Vanta control library.              |
+| [`update_control`](https://developer.vanta.com/reference/updatecontrolmetadata)                           | Update a control's metadata.                               |
+| [`delete_control`](https://developer.vanta.com/reference/deletecontrol)                                   | Deactivate (delete) a control.                             |
+| [`set_control_owner`](https://developer.vanta.com/reference/setownerforcontrol)                           | Set a control's owner.                                     |
+| [`add_document_to_control`](https://developer.vanta.com/reference/adddocumenttocontrol)                   | Map a document to a control.                               |
+| [`remove_document_from_control`](https://developer.vanta.com/reference/deletedocumentforcontrol)          | Remove a document mapping from a control.                  |
+| [`add_test_to_control`](https://developer.vanta.com/reference/addtesttocontrol)                           | Map a test to a control.                                   |
+| [`remove_test_from_control`](https://developer.vanta.com/reference/deletetestforcontrol)                  | Remove a test mapping from a control.                      |
+| [`create_document`](https://developer.vanta.com/reference/createdocument)                                 | Create a custom document (evidence request).               |
+| [`delete_document`](https://developer.vanta.com/reference/deletedocument)                                 | Delete a document by ID.                                   |
+| [`create_document_link`](https://developer.vanta.com/reference/createlinkfordocument)                     | Add an external link as document evidence.                 |
+| [`delete_document_link`](https://developer.vanta.com/reference/deletelinkfordocument)                     | Remove an external link from a document.                   |
+| [`set_document_owner`](https://developer.vanta.com/reference/setownerfordocument)                         | Set a document's owner.                                    |
+| [`submit_document_collection`](https://developer.vanta.com/reference/submitdocumentcollection)            | Submit a document's collected evidence.                    |
+| [`delete_document_upload`](https://developer.vanta.com/reference/deletefilefordocument)                   | Delete an uploaded file from a document.                   |
+| [`upload_file_for_document`](https://developer.vanta.com/reference/uploadfilefordocument)                 | Upload evidence from base64 content or a local file path.  |
+| [`create_risk_scenario`](https://developer.vanta.com/reference/createriskscenario)                        | Create a risk scenario.                                    |
+| [`update_risk_scenario`](https://developer.vanta.com/reference/updateriskscenario)                        | Update a risk scenario's fields.                           |
+| [`submit_risk_for_approval`](https://developer.vanta.com/reference/submitriskforapproval)                 | Submit a risk scenario for approval.                       |
+| [`cancel_risk_approval_request`](https://developer.vanta.com/reference/cancelriskscenarioapprovalrequest) | Cancel a pending approval request.                         |
+| [`add_risk_scenario_control`](https://developer.vanta.com/reference/createriskscenariocontrol)            | Add a control to a risk scenario.                          |
+| [`update_risk_scenario_control`](https://developer.vanta.com/reference/updateriskscenariocontrol)         | Change a risk scenario control's type.                     |
+| [`remove_risk_scenario_control`](https://developer.vanta.com/reference/deleteriskscenariocontrol)         | Remove a control from a risk scenario.                     |
 
 ## Configuration
 
@@ -146,6 +227,55 @@ Add the server to your Cursor MCP settings:
     "Vanta": {
       "command": "npx",
       "args": ["-y", "@vantasdk/vanta-mcp-server"],
+      "env": {
+        "VANTA_ENV_FILE": "/absolute/path/to/your/vanta-credentials.env"
+      }
+    }
+  }
+}
+```
+
+### Write Operations
+
+By default the server is **read-only** — only tools that read from Vanta are registered, and the OAuth token requests only the `vanta-api.all:read` scope. To enable the [write tools](#write-tools), pass `--dangerously-allow-writes` when starting the server. This flag:
+
+- Registers the write tools (e.g. `deactivate_vulnerabilities`, `create_risk_scenario`) that are otherwise hidden
+- Requests the `vanta-api.all:write` OAuth scope in addition to `vanta-api.all:read`
+
+> **⚠️ Warning:** Write operations create, modify, and delete data in your Vanta account. Only enable this flag in environments and with credentials where mutations are intended.
+
+To enable in **Claude Desktop**, add the flag to the `args` array:
+
+```json
+{
+  "mcpServers": {
+    "vanta": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@vantasdk/vanta-mcp-server",
+        "--dangerously-allow-writes"
+      ],
+      "env": {
+        "VANTA_ENV_FILE": "/absolute/path/to/your/vanta-credentials.env"
+      }
+    }
+  }
+}
+```
+
+To enable in **Cursor**, add the flag to the `args` array:
+
+```json
+{
+  "mcpServers": {
+    "Vanta": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@vantasdk/vanta-mcp-server",
+        "--dangerously-allow-writes"
+      ],
       "env": {
         "VANTA_ENV_FILE": "/absolute/path/to/your/vanta-credentials.env"
       }

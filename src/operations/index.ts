@@ -21,6 +21,14 @@ export * from "./monitored-computers.js";
 export * from "./vendor-risk-attributes.js";
 export * from "./trust-centers.js";
 
+// Write operation modules (tools gated behind --dangerously-allow-writes)
+export * from "./write-vulnerabilities.js";
+export * from "./write-tests.js";
+export * from "./write-people.js";
+export * from "./write-controls.js";
+export * from "./write-documents.js";
+export * from "./write-risks.js";
+
 // Common utilities and shared resources
 export * from "./common/utils.js";
 export * from "./common/descriptions.js";

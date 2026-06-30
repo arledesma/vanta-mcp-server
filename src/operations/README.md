@@ -145,6 +145,58 @@ export async function downloadDocumentFile(
 }
 ```
 
+### Write Operations
+
+Write (mutating) tools live in dedicated `write-*.ts` modules (e.g. `write-controls.ts`,
+`write-risks.ts`) and are **disabled by default**. They are only registered when the server is
+started with the `--dangerously-allow-writes` CLI flag, which also escalates the OAuth token to
+request the `vanta-api.all:write` scope (see `src/auth.ts`).
+
+Each write tool/handler pair sets `requiresWrites: true` in its registry entry. The registry
+(`src/registry.ts`) skips any `requiresWrites` tool unless `isWritesEnabled()` (from
+`src/config.ts`) returns true:
+
+```typescript
+export default {
+  tools: [
+    {
+      tool: DeactivateVulnerabilitiesTool,
+      handler: deactivateVulnerabilities,
+      requiresWrites: true,
+    },
+  ],
+};
+```
+
+Handlers use two write-specific helpers from `common/utils.ts`:
+
+- **`makeAuthenticatedWriteRequest(url, method, body?)`** — issues a `POST`/`PATCH`/`DELETE` with a
+  JSON body, reusing `makeAuthenticatedRequest` (so it keeps the 401-refresh-and-retry behavior).
+- **`handleWriteApiResponse(response)`** — like `handleApiResponse`, but tolerates empty/`204 No
+Content` bodies (common for deletes and deactivations), which would otherwise make
+  `response.json()` throw and surface a false error.
+
+For `multipart/form-data` uploads (e.g. `upload_file_for_document`), use
+**`makeAuthenticatedMultipartRequest(url, form)`** instead: it sends a `FormData` body and
+deliberately omits `Content-Type` so `fetch` can set the multipart boundary. Because a JSON tool
+schema cannot carry raw bytes, the tool accepts the file as either base64-encoded `content` (works
+anywhere, including remote/hosted servers) or a local `filePath` the server reads from disk —
+exactly one is required, enforced in the handler (not via a Zod `.refine`, which would turn the
+schema into a `ZodEffects` and break the registry's `ZodObject`/`.shape` contract).
+
+```typescript
+export async function deactivateVulnerabilities(
+  args: z.infer<typeof DeactivateVulnerabilitiesInput>,
+): Promise<CallToolResult> {
+  const url = buildUrl("/v1/vulnerabilities/deactivate");
+  const response = await makeAuthenticatedWriteRequest(url, "POST", args);
+  return handleWriteApiResponse(response);
+}
+```
+
+When adding a write tool, also add its name to `enabledToolNames` in `src/config.ts` and register
+the new `write-*.ts` module in `registerAllOperations` (`src/registry.ts`).
+
 ## Shared Infrastructure (`common/`)
 
 ### `descriptions.ts`

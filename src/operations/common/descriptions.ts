@@ -28,3 +28,12 @@ export const VENDOR_ID_DESCRIPTION =
 
 export const DISCOVERED_VENDOR_ID_DESCRIPTION =
   "Discovered vendor ID to operate on, e.g. 'discovered-vendor-123' or specific discovered vendor identifier";
+
+export const PERSON_ID_DESCRIPTION =
+  "Person ID to operate on, e.g. 'person-123' or specific person identifier";
+
+export const TEST_ID_DESCRIPTION =
+  "Test ID to operate on, e.g. 'test-123' or specific test identifier";
+
+export const RISK_SCENARIO_ID_DESCRIPTION =
+  "Risk scenario ID to operate on, e.g. 'risk-123' or specific risk scenario identifier";

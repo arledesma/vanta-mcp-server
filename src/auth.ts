@@ -1,8 +1,18 @@
 import fs from "node:fs";
 import { BASE_API_URL } from "./api.js";
 import { z } from "zod";
+import { isWritesEnabled } from "./config.js";
 
-const VANTA_API_SCOPE = "vanta-api.all:read";
+/**
+ * Returns the OAuth scope string for the token request. When write operations
+ * are enabled (--dangerously-allow-writes), the write scope is requested in
+ * addition to read; otherwise the token is read-only.
+ */
+function getApiScope(): string {
+  return isWritesEnabled()
+    ? "vanta-api.all:read vanta-api.all:write"
+    : "vanta-api.all:read";
+}
 
 interface OAuthCredentials {
   client_id: string;
@@ -68,7 +78,7 @@ async function fetchNewToken(): Promise<TokenInfo> {
       client_id: credentials.client_id,
       client_secret: credentials.client_secret,
       grant_type: "client_credentials",
-      scope: VANTA_API_SCOPE,
+      scope: getApiScope(),
     }),
   });
 
