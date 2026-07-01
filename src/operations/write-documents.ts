@@ -64,9 +64,10 @@ const SetDocumentOwnerInput = z.object({
   documentId: z.string().describe(DOCUMENT_ID_DESCRIPTION),
   userId: z
     .string()
-    .nullable()
+    .nullish()
     .describe(
-      "ID of the Vanta user to set as document owner. Pass null to unassign (remove the current owner).",
+      "ID of the Vanta user to set as document owner. To unassign (remove the current " +
+        'owner), pass a JSON null — not the string "null". Omitting the field also unassigns.',
     ),
 });
 
@@ -220,9 +221,22 @@ export async function deleteDocumentLink(
 export async function setDocumentOwner(
   args: z.infer<typeof SetDocumentOwnerInput>,
 ): Promise<CallToolResult> {
-  const { documentId, ...body } = args;
+  const { documentId, userId } = args;
+  // Vanta's set-owner endpoint requires `userId` to be present in the body and
+  // accepts null to unassign the current owner (there is no separate unassign
+  // endpoint). Normalize every "no owner" encoding — an omitted field, JSON
+  // null, an empty string, or the literal string "null" that some MCP clients
+  // emit in place of a real null — to an explicit null, so unassigning works
+  // regardless of how the caller encodes it. Real Vanta user IDs are never
+  // "" or "null", so this cannot swallow a valid assignment.
+  const ownerId =
+    typeof userId === "string" && userId !== "" && userId !== "null"
+      ? userId
+      : null;
   const url = buildUrl(`/v1/documents/${String(documentId)}/set-owner`);
-  const response = await makeAuthenticatedWriteRequest(url, "POST", body);
+  const response = await makeAuthenticatedWriteRequest(url, "POST", {
+    userId: ownerId,
+  });
   return handleWriteApiResponse(response);
 }
 
