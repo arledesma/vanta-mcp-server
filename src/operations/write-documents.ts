@@ -62,7 +62,12 @@ const DeleteDocumentLinkInput = z.object({
 
 const SetDocumentOwnerInput = z.object({
   documentId: z.string().describe(DOCUMENT_ID_DESCRIPTION),
-  userId: z.string().describe("ID of the Vanta user to set as document owner."),
+  userId: z
+    .string()
+    .nullable()
+    .describe(
+      "ID of the Vanta user to set as document owner. Pass null to unassign (remove the current owner).",
+    ),
 });
 
 const SubmitDocumentCollectionInput = z.object({
@@ -143,7 +148,11 @@ export const DeleteDocumentLinkTool: Tool<typeof DeleteDocumentLinkInput> = {
 
 export const SetDocumentOwnerTool: Tool<typeof SetDocumentOwnerInput> = {
   name: "set_document_owner",
-  description: "Set the owner of a document to a given Vanta user.",
+  description:
+    "Set or clear the owner of a document. Pass a Vanta user ID in userId to assign an " +
+    "owner, or null to unassign (remove the current owner). Because an evidence-request " +
+    "'Test' shown under the Tests area and its Document are the same object (shared ID/slug), " +
+    "this also sets the owner of the corresponding Test — use the shared document ID.",
   parameters: SetDocumentOwnerInput,
 };
 

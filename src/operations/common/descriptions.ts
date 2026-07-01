@@ -9,7 +9,10 @@ export const PAGE_CURSOR_DESCRIPTION = `A marker or pointer telling the API wher
 subsequent page in a paginated response. Leave blank to start from the first page.`;
 
 export const DOCUMENT_ID_DESCRIPTION =
-  "Document ID to operate on, e.g. 'document-123' or specific document identifier";
+  "Document ID to operate on, e.g. 'document-123' or specific document identifier. " +
+  "Note: an evidence-request 'Test' shown under the Tests area is the same object as its " +
+  "Document and shares this same ID/slug. To operate on such a Test (e.g. set its owner), " +
+  "use its document ID here.";
 
 export const SLUG_ID_DESCRIPTION =
   "Slug ID to operate on, e.g. 'my-trust-center' or specific slug identifier";
